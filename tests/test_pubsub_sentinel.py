@@ -8,7 +8,7 @@ from async_generator import async_generator, yield_
 from asgiref.sync import async_to_sync
 from channels_redis.pubsub import RedisPubSubChannelLayer
 
-SENTINEL_MASTER = "sentinel"
+SENTINEL_MASTER = "sentinels"
 TEST_HOSTS = [{"sentinels": [("localhost", 26379)], "master_name": SENTINEL_MASTER}]
 
 
