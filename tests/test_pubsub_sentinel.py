@@ -8,8 +8,8 @@ from async_generator import async_generator, yield_
 from asgiref.sync import async_to_sync
 from channels_redis.pubsub import RedisPubSubChannelLayer
 
-SENTINEL_MASTER = "sentinels"
-TEST_HOSTS = [{"sentinels": [("localhost", 26379)], "master_name": SENTINEL_MASTER}]
+SENTINEL_MASTER = "sentinel"
+TEST_HOSTS = [{"sentinels": [("127.0.0.1", 26379)], "master_name": SENTINEL_MASTER}]
 
 
 @pytest.fixture()
