@@ -1,0 +1,63 @@
+version: 2.1
+
+jobs:
+  
+  build-medium-amd64:
+    machine:
+      image: ubuntu-2004:202101-01
+   
+    working_directory: ~/channel_redis
+    steps:
+      
+      - checkout
+      - run:
+          name: ️️🏗️ pip dev requirements
+          command: |
+           sudo apt-get update && sudo apt-get --allow-downgrades install python3 python3-pip 
+           sudo apt-get install libpq-dev --allow-downgrades libxml2-dev --allow-downgrades libxslt1-dev --allow-downgrades python3-dev --allow-downgrades
+           sudo apt-get install gcc-aarch64-linux-gnu --allow-downgrades 
+           python3 -m pip install backports.zoneinfo
+           python3 -m pip install --upgrade pip wheel setuptools tox 
+           python3 setup.py install
+           python3 -m pip install -U channels
+           export REDIS_MASTER_HOST=redis
+           export REDIS_MASTER_SET=sentinel
+           export REDIS_SENTINEL_QUORUM=1 
+           sudo apt install redis-server --allow-downgrades
+           sudo apt-get install redis-sentinel --allow-downgrades
+           sudo redis-sentinel /etc/redis/sentinel.conf
+           sudo service redis-server start
+           pip3 install tox 
+           tox -e py38
+           
+           
+  build-medium-arm64:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: arm.medium
+    working_directory: ~/channel_redis
+    steps:
+      
+      - checkout
+      - run:
+          name: ️️🏗️ pip dev requirements
+          command: |
+            uname -m
+            sudo apt-get update && sudo apt-get --allow-downgrades install python3 python3-pip 
+            sudo apt-get install libpq-dev --allow-downgrades libxml2-dev --allow-downgrades libxslt1-dev --allow-downgrades python3-dev --allow-downgrades
+            sudo apt-get install gcc-aarch64-linux-gnu --allow-downgrades 
+            python3 -m pip install backports.zoneinfo
+            python3 -m pip install --upgrade pip wheel setuptools tox 
+            python3 setup.py install 
+            sudo apt install redis-server --allow-downgrades
+            sudo service redis-server start
+            pip3 install tox 
+            tox -e py38
+                   
+workflows:
+  version: 2
+  python3.8:
+    jobs:
+      
+      - build-medium-amd64
+      - build-medium-arm64     
